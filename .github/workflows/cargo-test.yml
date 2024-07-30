@@ -14,38 +14,13 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-24.04, windows-latest, macos-latest]
-        shell: ["bash", "msys2 {0}"]
-        include: 
-          - os: macos-latest
-            llvm-install-dir: /opt/homebrew/opt/llvm
-        exclude: 
-          - os: windows-latest
-            shell: bash
-          - os: macos-latest
-            shell: 'msys2 {0}'
-          - os: ubuntu-24.04
-            shell: 'msys2 {0}'
 
     runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ matrix.allow-failure || false }}
-    
-    defaults:
-      run:
-        shell: ${{ matrix.shell }}
     
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
-      # Use MSYS2 on windows
-      - uses: msys2/setup-msys2@v2
-        if: ${{ matrix.os == 'windows-latest' }}
-        with: 
-          update: true
-          # Install the current stable rust
-          install: >-
-            mingw-w64-x86_64-rust
-            
+
       # Use stable Rust toolchain 
       - uses: actions-rs/toolchain@v1
         with:
