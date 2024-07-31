@@ -1,8 +1,8 @@
 //! Linux specific implementation.
 
+use core::{ffi::c_int, mem};
 use errno::Errno;
 use libc::sysinfo;
-use core::{ffi::c_int, mem};
 
 /// Get information about the host machine using [`sysinfo`](fn@sysinfo) or return [`errno`] if it fails.
 pub fn populate_sysinfo() -> Result<sysinfo, Errno> {
@@ -20,7 +20,7 @@ pub fn populate_sysinfo() -> Result<sysinfo, Errno> {
 }
 
 /// Get a properly populated [`sysinfo`] or panic.
-/// 
+///
 /// # Panics
 /// - If the underlying [`sysinfo`](fn@sysinfo) call fails.
 pub fn get_sysinfo() -> sysinfo {

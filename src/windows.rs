@@ -1,11 +1,11 @@
 //! Windows specific implementation of getting memory info/status.
 
+use core::mem;
 use errno::Errno;
 use windows_sys::Win32::System::SystemInformation::{GlobalMemoryStatusEx, MEMORYSTATUSEX};
-use core::mem;
 
 /// Appropriately populate a [MEMORYSTATUSEX] object using the [GlobalMemoryStatusEx] syscall.
-/// 
+///
 /// If [GlobalMemoryStatusEx] errors, return the error code from [GlobalMemoryStatusEx].
 pub fn populate_mem_status() -> Result<MEMORYSTATUSEX, Errno> {
     // SAFETY: All of the fields of this struct are unsigned integers of various sizes,
@@ -26,7 +26,7 @@ pub fn populate_mem_status() -> Result<MEMORYSTATUSEX, Errno> {
 }
 
 /// Populate a [MEMORYSTATUSEX] properly or panic.
-/// 
+///
 /// # Panics
 /// - If the underlying system call to windows returns an error.
 pub fn mem_status() -> MEMORYSTATUSEX {
