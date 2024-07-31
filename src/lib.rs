@@ -15,19 +15,59 @@
 #[cfg(windows)]
 pub mod windows;
 
-/// Get the number of bytes of phiscal memory on this host.
+#[cfg(any(target_os = "macos", target_os = "ios"))]
+pub mod macos;
+
+#[cfg(target_os = "linux")]
+pub mod linux;
+
+/// Get the total number of bytes of physical memory on this host.
 /// 
 /// # Panics
 /// This function may panic if any of the underlying platform-specific syscalls fail.
-#[cfg(any(windows, unix))]
+#[cfg(any(windows, target_os = "linux", target_os = "macos", target_os = "ios"))]
 #[allow(unreachable_code)]
 pub fn total() -> u64 {
     #[cfg(windows)]
-    return windows::total_physical_memory();
+    return windows::mem_status().ullTotalPhys;
+
+    #[cfg(target_os = "linux")]
+    return linux::get_sysinfo().totalram as u64;
+
+    #[cfg(any(target_os = "macos", target_os = "ios"))]
+    return macos::total();
 
     unreachable!("This function should have already hit a CFG and returned");
 }
 
+
+/// Get the number of bytes of available physical memory on this host.
+/// 
+/// # Panics
+/// This function may panic if any of the underlying platform-specific syscalls fail.
+#[cfg(any(windows, target_os = "linux", target_os = "macos", target_os = "ios"))]
+#[allow(unreachable_code)]
+pub fn available() -> u64 {
+    #[cfg(windows)]
+    return windows::mem_status().ullAvailPhys;
+
+    #[cfg(target_os = "linux")]
+    return linux::get_sysinfo().freeram as u64;
+
+    #[cfg(any(target_os = "macos", target_os = "ios"))]
+    return macos::calculate_available_memory();
+
+    unreachable!("This function should have already hit a CFG and returned");
+}
+
+/// Get the number of bytes of physical memory currently in use.
+/// 
+/// # Panics
+/// This function may panic if any of the underlying platform-specific syscalls fail.
+#[cfg(any(windows, target_os = "linux", target_os = "macos", target_os = "ios"))]
+pub fn used() -> u64 {
+    total() - available()
+}
 
 #[cfg(test)]
 mod tests {
@@ -37,5 +77,7 @@ mod tests {
     #[test]
     fn get_total_system_memory() {
         println!("Total system memory: {:.2} GiB", super::total() as f64 / 1024f64 / 1024f64 / 1024f64);
+        println!("Available system memory: {:.2} GiB", super::available() as f64 / 1024f64 / 1024f64 / 1024f64);
+        assert_eq!(super::used(), super::total() - super::available());
     }
 }
