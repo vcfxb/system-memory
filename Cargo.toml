@@ -5,6 +5,7 @@ edition = "2021"
 authors = ["Venus Xeon-Blonde"]
 description = "A small crate to get info/stats on the host's memory"
 license = "MIT"
+documentation = "https://docs.rs/system-memory"
 
 [dependencies]
 errno = { version = "0.3.9", default-features = false }
@@ -28,7 +29,6 @@ version = "0.3"
 rustc_version = "0.4.0"
 
 [package.metadata.docs.rs]
-features = ["const-extern-fn", "extra_traits"]
 default-target = "x86_64-unknown-linux-gnu"
 targets = [
     "aarch64-apple-darwin",
