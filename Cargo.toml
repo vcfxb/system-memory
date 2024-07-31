@@ -3,7 +3,8 @@ name = "system-memory"
 version = "0.1.0"
 edition = "2021"
 authors = ["Venus Xeon-Blonde"]
-descrition = "A small crate to get info/stats on the host's memory"
+description = "A small crate to get info/stats on the host's memory"
+license = "MIT"
 
 [dependencies]
 errno = { version = "0.3.9", default-features = false }
