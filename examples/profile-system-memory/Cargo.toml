@@ -1,0 +1,9 @@
+[package]
+name = "profile-system-memory"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+indicatif = { version = "0.17.8", default-features = false }
+memory-stats = "1.2.0"
+system-memory = { path = "../../../system-memory" }
