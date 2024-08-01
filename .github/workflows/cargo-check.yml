@@ -26,7 +26,7 @@ jobs:
     
       # Use jq to list targets and install them
       - name: Install jq
-        run: apt install jq
+        run: sudo apt install jq
 
       - name: Install additional targets
         run: |

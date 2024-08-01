@@ -18,4 +18,4 @@ jobs:
           toolchain: stable
 
       - name: Run Clippy
-        run: cargo clippy -- --deny clippy::all --deny warnings
+        run: cargo clippy --target $(rustc --version --verbose | grep host | awk '{print $2}') -- --deny clippy::all --deny warnings
