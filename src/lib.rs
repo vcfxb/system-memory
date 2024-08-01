@@ -8,6 +8,7 @@
 
 #![deny(missing_copy_implementations, missing_debug_implementations)]
 #![deny(rustdoc::broken_intra_doc_links)]
+#![deny(clippy::cast_possible_truncation)]
 #![warn(missing_docs)]
 #![no_std]
 // Compiler directive to get docs.rs (which uses the nightly version of the rust compiler) to show
@@ -35,14 +36,10 @@ pub fn total() -> u64 {
     #[cfg(windows)]
     return windows::mem_status().ullTotalPhys;
 
-    // sysinfo.totalram is a C unsigned long, which is only a u32 on On i686-unknown-linux-gnu, so we use a special
-    // cfg here to specify the cast
-    #[cfg(all(target_os = "linux", target_arch = "x86"))]
+    // sysinfo.totalram is a C unsigned long, which is a u32 on some targets.
+    // cast to u64 just to be sure.
+    #[cfg(target_os = "linux")]
     return linux::get_sysinfo().totalram as u64;
-
-    // Otherwise it should be a u64 already.
-    #[cfg(all(target_os = "linux", not(target_arch = "x86")))]
-    return linux::get_sysinfo().totalram;
 
     #[cfg(any(target_os = "macos", target_os = "ios"))]
     return macos::total();
@@ -61,12 +58,8 @@ pub fn available() -> u64 {
     return windows::mem_status().ullAvailPhys;
 
     // sysinfo.freeram is the same as sysinfo.totalram above.
-    #[cfg(all(target_os = "linux", target_arch = "x86"))]
+    #[cfg(target_os = "linux")]
     return linux::get_sysinfo().freeram as u64;
-
-    // Otherwise it should be a u64 already.
-    #[cfg(all(target_os = "linux", not(target_arch = "x86")))]
-    return linux::get_sysinfo().freeram;
 
     #[cfg(any(target_os = "macos", target_os = "ios"))]
     return macos::calculate_available_memory();

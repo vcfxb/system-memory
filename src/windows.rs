@@ -13,7 +13,14 @@ pub fn populate_mem_status() -> Result<MEMORYSTATUSEX, Errno> {
 
     // Set the length field of the memory status struct as required before calling into the windows API.
     // SAFETY: We are writing to this pointer not reading it, so it should be safe.
-    unsafe { (*mem_status_ex.as_mut_ptr()).dwLength = size_of::<MEMORYSTATUSEX>() as u32 };
+    //
+    // Additionally we allow the possible truncation in casting, since we know the size of this struct should not
+    // be large enough to cause truncation when casting from usize to u32, which is the type of windows API double
+    // words.
+    #[allow(clippy::cast_possible_truncation)]
+    unsafe {
+        (*mem_status_ex.as_mut_ptr()).dwLength = size_of::<MEMORYSTATUSEX>() as u32
+    };
 
     // Call the windows system API.
     let return_value = unsafe { GlobalMemoryStatusEx(mem_status_ex.as_mut_ptr()) };
