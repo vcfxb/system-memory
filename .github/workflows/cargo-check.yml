@@ -30,7 +30,7 @@ jobs:
 
       - name: Install additional targets
         run: |
-          rustup install $(tq -f .cargo/config.toml build.target -o json | jq -r "@sh")
+          rustup install $(tq -f .cargo/config.toml build.target -o json | jq -r "@sh" | tr -d "'")
   
       - name: Run cargo check
         run: cargo check
