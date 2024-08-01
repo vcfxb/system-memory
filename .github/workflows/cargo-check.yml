@@ -22,7 +22,7 @@ jobs:
       
       # Use tq to list targets and install them
       - name: Install tq
-        run: cargo binstall -y tomlq
+        run: cargo install tomlq
     
       # Use jq to list targets and install them
       - name: Install jq
