@@ -1,4 +1,3 @@
-# Combined cargo test with LLVM installation for the three major platforms.
 
 name: Cargo Test
 on: ["push", "pull_request"]
@@ -15,12 +14,8 @@ jobs:
       matrix:
         os: [ubuntu-24.04, windows-latest, macos-latest]
         include:
-          - os: ubuntu-24.04
-            target: x86_64-unknown-linux-gnu
           - os: windows-latest
             target: x86_64-pc-windows-msvc
-          - os: macos-latest
-            target: x86_64-apple-darwin
 
     runs-on: ${{ matrix.os }}
     
@@ -34,4 +29,4 @@ jobs:
           toolchain: stable
   
       - name: Run cargo test
-        run: cargo test --target ${{ matrix.target }} -- --nocapture
+        run: cargo test --target ${{ matrix.target || '$(rustc --version --verbose | grep host | awk ''{print $2}'')' }} -- --nocapture
