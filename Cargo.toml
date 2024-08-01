@@ -1,6 +1,6 @@
 [package]
 name = "system-memory"
-version = "0.1.3"
+version = "0.1.4"
 edition = "2021"
 authors = ["Venus Xeon-Blonde"]
 description = "A small crate to get info/stats on the host's memory"

@@ -66,6 +66,11 @@ pub fn total() -> u64 {
 }
 
 /// Get the memory statistics about the host mac.
+///
+/// It is undocumented whether or not [`host_statistics64`] actually uses/populates [`errno`]. As such, any errors
+/// returned by this function should be treated skeptically, and may be equal to [`Errno(0)`].
+///
+/// [`Errno(0)`]: [Errno]
 pub fn vm_statistics() -> Result<vm_statistics64, Errno> {
     let mach_port = unsafe { mach_host_self() };
     let mut count = HOST_VM_INFO64_COUNT;

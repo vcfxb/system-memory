@@ -1,5 +1,10 @@
 //! A small crate that resolves the total system memory of the host. This is useful for many projects that
 //! may behave differently depending on how much memory the host system has and how much is available.
+//!
+//! Be aware of the potential for data races when using this code -- since the amount of available system memory may (
+//! and likely will) change between calls, repeated use of the function even on the same thread cannot be expected to
+//! return the same values, nor will [`available`] necessarily return values consistent with [`used`], since the value
+//! may change between calls.
 
 #![deny(missing_copy_implementations, missing_debug_implementations)]
 #![deny(rustdoc::broken_intra_doc_links)]
@@ -30,8 +35,14 @@ pub fn total() -> u64 {
     #[cfg(windows)]
     return windows::mem_status().ullTotalPhys;
 
-    #[cfg(target_os = "linux")]
+    // sysinfo.totalram is a C unsigned long, which is only a u32 on On i686-unknown-linux-gnu, so we use a special
+    // cfg here to specify the cast
+    #[cfg(all(target_os = "linux", target_arch = "x86"))]
     return linux::get_sysinfo().totalram as u64;
+
+    // Otherwise it should be a u64 already.
+    #[cfg(all(target_os = "linux", not(target_arch = "x86")))]
+    return linux::get_sysinfo().totalram;
 
     #[cfg(any(target_os = "macos", target_os = "ios"))]
     return macos::total();
@@ -49,8 +60,13 @@ pub fn available() -> u64 {
     #[cfg(windows)]
     return windows::mem_status().ullAvailPhys;
 
-    #[cfg(target_os = "linux")]
+    // sysinfo.freeram is the same as sysinfo.totalram above.
+    #[cfg(all(target_os = "linux", target_arch = "x86"))]
     return linux::get_sysinfo().freeram as u64;
+
+    // Otherwise it should be a u64 already.
+    #[cfg(all(target_os = "linux", not(target_arch = "x86")))]
+    return linux::get_sysinfo().freeram;
 
     #[cfg(any(target_os = "macos", target_os = "ios"))]
     return macos::calculate_available_memory();
