@@ -23,14 +23,10 @@ jobs:
       # Use tq to list targets and install them
       - name: Install tq
         run: cargo install tomlq
-    
-      # Use jq to list targets and install them
-      - name: Install jq
-        run: sudo apt install jq
 
       - name: Install additional targets
         run: |
-          rustup install $(tq -f .cargo/config.toml build.target -o json | jq -r "@sh" | tr -d "'")
+          rustup target add $(tq -f .cargo/config.toml build.target -o json | jq -r "@sh" | tr -d "'")
   
       - name: Run cargo check
         run: cargo check
