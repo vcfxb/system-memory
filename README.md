@@ -18,5 +18,5 @@ windows, mac, and linux, but if you run into any issues please do not hesitate t
 |  | Downloads|
 |:---:|:---:|
 | Crates.io | [![Crates.io](https://img.shields.io/crates/d/system-memory.svg)](https://crates.io/crates/system-memory) |
-| Crates.io (Latest) | [![Crates.io](https://img.shields.io/crates/dv/system-memory.svg)](https://crates.io/crates/system-memory/0.1.1) |
+| Crates.io (Latest) | [![Crates.io](https://img.shields.io/crates/dv/system-memory.svg)](https://crates.io/crates/system-memory/0.1.7) |
 
