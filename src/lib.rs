@@ -91,6 +91,9 @@ mod tests {
             "Available system memory: {:.2} GiB",
             super::available() as f64 / 1024f64 / 1024f64 / 1024f64
         );
+
+        // This may not always assert successfully -- there's a race condition here if the amount of available memory
+        // changes after the call to `super::used`.
         assert_eq!(super::used(), super::total() - super::available());
     }
 }
