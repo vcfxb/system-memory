@@ -9,7 +9,7 @@ documentation = "https://docs.rs/system-memory"
 repository = "https://github.com/vcfxb/system-memory"
 
 [dependencies]
-errno = { version = "0.3.10", default-features = false }
+errno = { version = "0.3.12", default-features = false }
 
 [target.'cfg(windows)'.dependencies.windows-sys]
 version = "0.59.0"
