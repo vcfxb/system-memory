@@ -13,7 +13,6 @@ target = [
     "armv5te-unknown-linux-musleabi",
     "armv7-unknown-linux-gnueabihf",
     "armv7-unknown-linux-musleabihf",
-    "i586-pc-windows-msvc",
     "i586-unknown-linux-gnu",
     "i586-unknown-linux-musl",
     "i686-pc-windows-gnu",
