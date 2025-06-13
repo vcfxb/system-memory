@@ -12,7 +12,7 @@ repository = "https://github.com/vcfxb/system-memory"
 errno = { version = "0.3.12", default-features = false }
 
 [target.'cfg(windows)'.dependencies.windows-sys]
-version = "0.59.0"
+version = "0.60.2"
 features = [
     # Use the system information API to get info about the host's memory.
     "Win32_System_SystemInformation",
