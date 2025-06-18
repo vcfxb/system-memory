@@ -19,7 +19,7 @@ features = [
 ]
 
 [target.'cfg(any(target_os = "linux", target_os = "macos", target_os = "ios"))'.dependencies]
-libc = "0.2.173"
+libc = "0.2.174"
 
 [target.'cfg(any(target_os = "macos", target_os = "ios"))'.dependencies.mach]
 version = "0.3"
