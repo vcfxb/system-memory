@@ -55,9 +55,12 @@ impl Snapshot {
         #[cfg(target_os = "linux")] {
             let sysinfo = linux::populate_sysinfo()?;
 
+            let total = sysinfo.totalram as _;
+            let available = sysinfo.freeram as _;
+
             return Ok(Self {
-                total: sysinfo.totalram as u64,
-                available: sysinfo.freeram as u64,
+                total,
+                available
             });
         }
 
