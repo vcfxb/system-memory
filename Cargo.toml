@@ -1,7 +1,7 @@
 [package]
 name = "system-memory"
 version = "0.2.0"
-edition = "2021"
+edition = "2024"
 authors = ["Venus Xeon-Blonde"]
 description = "A small crate to get info/stats on the host's memory"
 license = "MIT"
