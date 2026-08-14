@@ -21,8 +21,8 @@ features = [
 [target.'cfg(any(target_os = "linux", target_os = "macos", target_os = "ios"))'.dependencies]
 libc = "0.2.189"
 
-[target.'cfg(any(target_os = "macos", target_os = "ios"))'.dependencies.mach]
-version = "0.3"
+[target.'cfg(target_vendor = "apple")'.dependencies.mach2]
+version = "0.6"
 
 [build-dependencies]
 rustc_version = "0.4.1"
@@ -32,6 +32,7 @@ default-target = "x86_64-unknown-linux-gnu"
 targets = [
     "aarch64-apple-darwin",
     "aarch64-apple-ios",
+    "aarch64-pc-windows-gnullvm",
     "aarch64-pc-windows-msvc",
     "aarch64-unknown-linux-gnu",
     "aarch64-unknown-linux-musl",
@@ -43,11 +44,10 @@ targets = [
     "armv5te-unknown-linux-musleabi",
     "armv7-unknown-linux-gnueabihf",
     "armv7-unknown-linux-musleabihf",
-    "i586-pc-windows-msvc",
+#    "i586-pc-windows-msvc",
     "i586-unknown-linux-gnu",
     "i586-unknown-linux-musl",
     "i686-pc-windows-gnu",
-    "i686-pc-windows-msvc",
     "i686-pc-windows-msvc",
     "i686-unknown-linux-gnu",
     "i686-unknown-linux-musl",
