@@ -56,8 +56,8 @@ impl Snapshot {
             let sysinfo = linux::populate_sysinfo()?;
 
             return Ok(Self {
-                total: sysinfo.totalram,
-                available: sysinfo.freeram,
+                total: sysinfo.totalram as u64,
+                available: sysinfo.freeram as u64,
             });
         }
 
