@@ -26,25 +26,78 @@ pub mod macos;
 #[cfg(target_os = "linux")]
 pub mod linux;
 
+/// Snapshot of the host's memory stats.
+#[derive(Debug, Clone, Copy)]
+pub struct Snapshot {
+    /// Total number of bytes of physical memory on the host system.
+    pub total: u64,
+
+    /// Number of bytes of available physical memory on the host system.
+    pub available: u64,
+}
+
+impl Snapshot {
+    /// Try to get a snapshot of the state of the system's memory
+    #[cfg(any(windows, target_os = "linux", target_os = "macos", target_os = "ios"))]
+    #[allow(unreachable_code)]
+    pub fn get() -> Result<Self, Option<errno::Errno>> {
+        #[cfg(windows)] {
+            let mem_status = windows::populate_mem_status()?;
+
+            return Ok(Self {
+                total: mem_status.ullTotalPhys,
+                available: mem_status.ullAvailPhys,
+            });
+        }
+
+        // sysinfo.totalram is a C unsigned long, which is a u32 on some targets.
+        // cast to u64 just to be sure.
+        #[cfg(target_os = "linux")] {
+            let sysinfo = linux::populate_sysinfo()?;
+
+            return Ok(Self {
+                total: sysinfo.totalram,
+                available: sysinfo.freeram,
+            });
+        }
+
+        #[cfg(any(target_os = "macos", target_os = "ios"))] {
+            let total_memory = macos::try_get_total_physical_memory()?;
+            let page_size = macos::page_size()?;
+            let vm_stats = macos::vm_statistics()
+                .map_err(|errno| if errno.0 == 0 { None } else { Some(errno) })?;
+
+            return Ok(Self {
+                total: total_memory,
+                // This is how heim calculates it so we will too -- I wish macOS
+                // had better docs for this.
+                available: (vm_stats.active_count + vm_stats.free_count) as u64 * page_size,
+            });
+        }
+
+        unreachable!("This function should have already hit a CFG and returned");
+    }
+
+    /// Get the number of bytes of memory in use at the time of this snapshot.
+    pub fn in_use(&self) -> u64 {
+        self.total - self.available
+    }
+}
+
+
+#[cfg(any(windows, target_os = "linux", target_os = "macos", target_os = "ios"))]
+#[inline]
+fn get_snapshot() -> Snapshot {
+    Snapshot::get().expect("failed to query system for memory stats")
+}
+
 /// Get the total number of bytes of physical memory on this host.
 ///
 /// # Panics
 /// This function may panic if any of the underlying platform-specific syscalls fail.
 #[cfg(any(windows, target_os = "linux", target_os = "macos", target_os = "ios"))]
-#[allow(unreachable_code)]
 pub fn total() -> u64 {
-    #[cfg(windows)]
-    return windows::mem_status().ullTotalPhys;
-
-    // sysinfo.totalram is a C unsigned long, which is a u32 on some targets.
-    // cast to u64 just to be sure.
-    #[cfg(target_os = "linux")]
-    return linux::get_sysinfo().totalram as u64;
-
-    #[cfg(any(target_os = "macos", target_os = "ios"))]
-    return macos::total();
-
-    unreachable!("This function should have already hit a CFG and returned");
+    get_snapshot().total
 }
 
 /// Get the number of bytes of available physical memory on this host.
@@ -52,19 +105,8 @@ pub fn total() -> u64 {
 /// # Panics
 /// This function may panic if any of the underlying platform-specific syscalls fail.
 #[cfg(any(windows, target_os = "linux", target_os = "macos", target_os = "ios"))]
-#[allow(unreachable_code)]
 pub fn available() -> u64 {
-    #[cfg(windows)]
-    return windows::mem_status().ullAvailPhys;
-
-    // sysinfo.freeram is the same as sysinfo.totalram above.
-    #[cfg(target_os = "linux")]
-    return linux::get_sysinfo().freeram as u64;
-
-    #[cfg(any(target_os = "macos", target_os = "ios"))]
-    return macos::calculate_available_memory();
-
-    unreachable!("This function should have already hit a CFG and returned");
+    get_snapshot().available
 }
 
 /// Get the number of bytes of physical memory currently in use.
@@ -73,7 +115,7 @@ pub fn available() -> u64 {
 /// This function may panic if any of the underlying platform-specific syscalls fail.
 #[cfg(any(windows, target_os = "linux", target_os = "macos", target_os = "ios"))]
 pub fn used() -> u64 {
-    total() - available()
+    get_snapshot().in_use()
 }
 
 #[cfg(test)]
