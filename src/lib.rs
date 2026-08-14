@@ -15,7 +15,7 @@
 // info about feature required for various modules and functionality.
 //
 // See: <https://stackoverflow.com/a/70914430>.
-#![cfg_attr(all(doc, CHANNEL_NIGHTLY), feature(doc_auto_cfg))]
+#![cfg_attr(all(doc, CHANNEL_NIGHTLY), feature(doc_cfg))]
 
 #[cfg(windows)]
 pub mod windows;
