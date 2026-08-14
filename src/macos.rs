@@ -4,10 +4,12 @@ use core::ptr;
 use core::{ffi::c_void, mem};
 use errno::Errno;
 use libc::{
-    host_info64_t, host_statistics64, mach_host_self, mach_task_self, sysconf, sysctlbyname,
+    host_info64_t, host_statistics64, sysconf, sysctlbyname,
     vm_statistics64, HOST_VM_INFO64, HOST_VM_INFO64_COUNT, KERN_SUCCESS, _SC_PAGESIZE,
 };
-use mach::mach_port::mach_port_deallocate;
+use mach2::mach_port::mach_port_deallocate;
+use mach2::mach_init::mach_host_self;
+use mach2::traps::mach_task_self;
 
 /// Get the page size using [`sysconf`] if possible.
 pub fn page_size() -> Result<u64, Option<Errno>> {
