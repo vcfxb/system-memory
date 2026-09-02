@@ -22,7 +22,7 @@ features = [
 libc = "0.2.189"
 
 [target.'cfg(target_vendor = "apple")'.dependencies.mach2]
-version = "0.6"
+version = "0.7"
 
 [build-dependencies]
 rustc_version = "0.4.1"
